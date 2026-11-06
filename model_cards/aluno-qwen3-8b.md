@@ -33,7 +33,7 @@ from peft import PeftModel
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 base = AutoModelForCausalLM.from_pretrained("Qwen/Qwen3-1.7B", dtype=torch.bfloat16, device_map="auto")
-model = PeftModel.from_pretrained(base, "fernandomcrsilva/<this-repo>")
+model = PeftModel.from_pretrained(base, "FMendonca/qwen3-1.7b-aspectos-olist-qwen3-8b")
 tok = AutoTokenizer.from_pretrained("Qwen/Qwen3-1.7B")
 
 review = "Produto ótimo, mas chegou com uma semana de atraso e a caixa amassada."

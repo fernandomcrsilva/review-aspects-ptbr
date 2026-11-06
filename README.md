@@ -4,6 +4,8 @@
 
 I fine-tuned the same student (Qwen3-1.7B + LoRA) twice on 9,000 Brazilian e-commerce reviews (Olist). One run used labels from **Claude Haiku**, a paid API. The other used labels from **Qwen3-8B**, running locally on a consumer **Radeon RX 7600 (8 GB)**. Both students were then evaluated on the same public test set.
 
+**On Hugging Face:** the [Haiku-teacher adapter](https://huggingface.co/FMendonca/qwen3-1.7b-aspectos-olist-haiku), the [Qwen3-8B-teacher adapter](https://huggingface.co/FMendonca/qwen3-1.7b-aspectos-olist-qwen3-8b), and the [10k Qwen3-8B labels](https://huggingface.co/datasets/FMendonca/olist-aspectos-silver-qwen3-8b).
+
 The task is aspect sentiment over five aspects: delivery, product, customer service, price and packaging. Each gets one of `positivo` / `negativo` / `neutro` / `ausente` (positive / negative / neutral / absent). The output is JSON that a support system can route on directly.
 
 ## Results
