@@ -8,22 +8,22 @@ datasets: [RenatoSpessotto/olist-aspectos-reviews-ptbr]
 tags: [lora, aspect-based-sentiment-analysis, portuguese, distillation, e-commerce, rocm]
 ---
 
-# Qwen3-1.7B com LoRA: sentimento por aspecto em avaliações PT-BR (professor Qwen3-8B (aberto, local))
+# Qwen3-1.7B com LoRA para análise de aspectos em avaliações da Olist (rótulos do Qwen3-8B)
 
-Adaptador LoRA para o [Qwen3-1.7B](https://huggingface.co/Qwen/Qwen3-1.7B). Ele lê uma avaliação de compra em português e devolve um JSON com o sentimento de cinco aspectos: `entrega`, `produto`, `atendimento`, `preco` e `embalagem`. Cada aspecto recebe `positivo`, `negativo`, `neutro` ou `ausente`.
+Este adaptador LoRA faz o [Qwen3-1.7B](https://huggingface.co/Qwen/Qwen3-1.7B) ler uma avaliação de compra em português e dizer como o cliente falou de cinco aspectos: `entrega`, `produto`, `atendimento`, `preco` e `embalagem`. Cada aspecto recebe `positivo`, `negativo`, `neutro` ou `ausente`, e a resposta sai em JSON.
 
-Foi destilado de rótulos do **Qwen3-8B (aberto, local)** em 9.000 avaliações da Olist e treinado numa Radeon RX 7600 de 8 GB, com ROCm. É um dos dois braços de um experimento que compara um professor aberto e local com um professor pago via API. O [código e os resultados completos](https://github.com/fernandomcrsilva/review-aspects-ptbr) estão no GitHub.
+O modelo foi treinado com 9 mil avaliações da Olist rotuladas pelo Qwen3-8B, um modelo aberto que rodou localmente na mesma placa. O treino rodou numa Radeon RX 7600 de 8 GB, com ROCm. Ele faz parte de um experimento que compara o que um aluno aprende com um professor aberto e local e com um professor pago. O [código e os resultados completos](https://github.com/fernandomcrsilva/review-aspects-ptbr) estão no GitHub.
 
-## Resultados no conjunto ouro público (329 avaliações)
+## Resultados no conjunto de teste público (329 avaliações)
 
 | Métrica | Valor |
 |---|---|
-| F1-macro (média do F1-macro de cada aspecto) | 0,690 |
-| Recall "pede ação" (algum aspecto negativo) | 96,2% |
-| JSON válido | 100% |
-| Avaliações/s numa RX 7600, batch 16 | 6,8 |
+| F1 macro (média dos cinco aspectos) | 0,690 |
+| Avaliações com aspecto negativo encontradas | 96,2% |
+| Respostas em JSON válido | 100% |
+| Avaliações por segundo numa RX 7600, em lotes de 16 | 6,8 |
 
-O outro braço (professor Claude Haiku) e os baselines estão no [repositório](https://github.com/fernandomcrsilva/review-aspects-ptbr#resultados). O ouro é o consenso de dois anotadores LLM, um deles o Claude Opus, e não foi anotado por pessoas. As limitações estão descritas lá.
+A comparação com o aluno treinado pelo Claude Haiku e com os outros modelos está no [repositório](https://github.com/fernandomcrsilva/review-aspects-ptbr#resultados). O conjunto de teste é o consenso de dois LLMs, um deles o Claude Opus, e não foi revisado por pessoas. As limitações estão explicadas lá.
 
 ## Como usar
 
@@ -47,10 +47,7 @@ print(tok.decode(out[0, enc["input_ids"].shape[1]:], skip_special_tokens=True))
 
 ## Treino
 
-- LoRA com r=16, alpha=32 e dropout 0,05, em todas as projeções de atenção e MLP.
-- 2 épocas, lr 2e-4 com decaimento cosseno, batch efetivo 16, bf16.
-- Loss só no JSON da resposta.
-- 44 minutos numa RX 7600 (ROCm 7.2), com pico de 4,3 GB de VRAM.
+O LoRA tem r=16, alpha=32 e dropout de 0,05, aplicado em todas as projeções de atenção e de MLP. Foram 2 épocas com taxa de aprendizado de 2e-4, decaimento cosseno, lote efetivo de 16 e bf16. A loss considera só o JSON da resposta. O treino levou 44 minutos numa RX 7600 com ROCm 7.2 e usou no máximo 4,3 GB de VRAM.
 
 ## Licença
 
