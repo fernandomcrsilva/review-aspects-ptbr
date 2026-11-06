@@ -8,24 +8,24 @@ datasets: [RenatoSpessotto/olist-aspectos-reviews-ptbr]
 tags: [lora, aspect-based-sentiment-analysis, portuguese, distillation, e-commerce, rocm]
 ---
 
-# Qwen3-1.7B LoRA: aspect sentiment for PT-BR reviews (Qwen3-8B (open, local) teacher)
+# Qwen3-1.7B com LoRA: sentimento por aspecto em avaliações PT-BR (professor Qwen3-8B (aberto, local))
 
-LoRA adapter for [Qwen3-1.7B](https://huggingface.co/Qwen/Qwen3-1.7B). It reads a Brazilian Portuguese purchase review and returns JSON with the sentiment of five aspects: `entrega` (delivery), `produto` (product), `atendimento` (customer service), `preco` (price) and `embalagem` (packaging). Each aspect gets one of `positivo` / `negativo` / `neutro` / `ausente` (positive / negative / neutral / absent).
+Adaptador LoRA para o [Qwen3-1.7B](https://huggingface.co/Qwen/Qwen3-1.7B). Ele lê uma avaliação de compra em português e devolve um JSON com o sentimento de cinco aspectos: `entrega`, `produto`, `atendimento`, `preco` e `embalagem`. Cada aspecto recebe `positivo`, `negativo`, `neutro` ou `ausente`.
 
-It was distilled from **Qwen3-8B (open, local)** labels on 9,000 Olist reviews and trained on a Radeon RX 7600 (8 GB, ROCm). It is one of the two arms of an experiment comparing an open, local teacher with a paid API teacher: [code and full results](https://github.com/fernandomcrsilva/review-aspects-ptbr).
+Foi destilado de rótulos do **Qwen3-8B (aberto, local)** em 9.000 avaliações da Olist e treinado numa Radeon RX 7600 de 8 GB, com ROCm. É um dos dois braços de um experimento que compara um professor aberto e local com um professor pago via API. O [código e os resultados completos](https://github.com/fernandomcrsilva/review-aspects-ptbr) estão no GitHub.
 
-## Results on the public gold set (329 reviews)
+## Resultados no conjunto ouro público (329 avaliações)
 
-| Metric | Value |
+| Métrica | Valor |
 |---|---|
-| Macro-F1 (mean of the per-aspect macro-F1) | 0.690 |
-| Recall, "needs action" (any negative aspect) | 96.2% |
-| Valid JSON | 100% |
-| Reviews/s on an RX 7600, batch 16 | 6.8 |
+| F1-macro (média do F1-macro de cada aspecto) | 0,690 |
+| Recall "pede ação" (algum aspecto negativo) | 96,2% |
+| JSON válido | 100% |
+| Avaliações/s numa RX 7600, batch 16 | 6,8 |
 
-The other arm (the Claude Haiku teacher) and the baselines are in the [repository](https://github.com/fernandomcrsilva/review-aspects-ptbr#results). The gold set is a consensus of two LLM annotators, one of them Claude Opus, and was not annotated by people. Read the limitations there.
+O outro braço (professor Claude Haiku) e os baselines estão no [repositório](https://github.com/fernandomcrsilva/review-aspects-ptbr#resultados). O ouro é o consenso de dois anotadores LLM, um deles o Claude Opus, e não foi anotado por pessoas. As limitações estão descritas lá.
 
-## Usage
+## Como usar
 
 ```python
 import torch
@@ -42,15 +42,16 @@ enc = tok.apply_chat_template([{"role": "user", "content": prompt}], add_generat
                               enable_thinking=False, return_tensors="pt", return_dict=True).to(model.device)
 out = model.generate(**enc, max_new_tokens=64, do_sample=False)
 print(tok.decode(out[0, enc["input_ids"].shape[1]:], skip_special_tokens=True))
+# {"entrega": "negativo", "produto": "positivo", "atendimento": "ausente", "preco": "ausente", "embalagem": "negativo"}
 ```
 
-## Training
+## Treino
 
-- LoRA r=16, alpha=32, dropout 0.05, on all attention and MLP projections.
-- 2 epochs, lr 2e-4 with cosine decay, effective batch 16, bf16.
-- Loss only on the JSON answer.
-- 44 min on an RX 7600 (ROCm 7.2), with a 4.3 GB VRAM peak.
+- LoRA com r=16, alpha=32 e dropout 0,05, em todas as projeções de atenção e MLP.
+- 2 épocas, lr 2e-4 com decaimento cosseno, batch efetivo 16, bf16.
+- Loss só no JSON da resposta.
+- 44 minutos numa RX 7600 (ROCm 7.2), com pico de 4,3 GB de VRAM.
 
-## License
+## Licença
 
-CC BY-NC-SA 4.0, inherited from the Olist data and the labels, so non-commercial use only. The base model, Qwen3-1.7B, is Apache 2.0.
+CC BY-NC-SA 4.0, herdada dos dados da Olist e dos rótulos, então o uso é só não comercial. O modelo base, Qwen3-1.7B, é Apache 2.0.

@@ -13,12 +13,12 @@ configs:
     path: validation.jsonl
 ---
 
-# Olist aspect labels from an open, local teacher (Qwen3-8B)
+# Rótulos de aspectos da Olist gerados por um professor aberto e local (Qwen3-8B)
 
-Labels for 10,000 Brazilian Portuguese Olist reviews (9,000 train and 1,000 validation). Each review has the sentiment of five aspects (`entrega`, `produto`, `atendimento`, `preco`, `embalagem`), labelled `positivo`, `negativo`, `neutro` or `ausente`.
+Rótulos para 10.000 avaliações da Olist em português: 9.000 de treino e 1.000 de validação. Cada avaliação tem o sentimento de cinco aspectos (`entrega`, `produto`, `atendimento`, `preco` e `embalagem`), rotulados como `positivo`, `negativo`, `neutro` ou `ausente`.
 
-The labels were produced by **Qwen3-8B** (Q4, Ollama on Vulkan, RX 7600), with JSON output constrained to the schema and thinking disabled. These are the same reviews and the same label definitions as the Claude Haiku labels in [RenatoSpessotto/olist-aspectos-reviews-ptbr](https://huggingface.co/datasets/RenatoSpessotto/olist-aspectos-reviews-ptbr). That makes the two label sets directly comparable.
+Os rótulos foram gerados pelo **Qwen3-8B** (Q4, Ollama com Vulkan numa RX 7600), com a saída JSON restrita ao esquema e o modo de raciocínio desligado. São as mesmas avaliações e as mesmas definições de rótulo dos rótulos do Claude Haiku em [RenatoSpessotto/olist-aspectos-reviews-ptbr](https://huggingface.co/datasets/RenatoSpessotto/olist-aspectos-reviews-ptbr), o que torna os dois conjuntos diretamente comparáveis.
 
-On the validation split, agreement with the Haiku labels (Cohen's kappa) is 0.83 for delivery, 0.74 for product, 0.69 for customer service, 0.71 for price and 0.72 for packaging.
+Na validação, a concordância com os rótulos do Haiku (kappa de Cohen) é de 0,83 em entrega, 0,74 em produto, 0,69 em atendimento, 0,71 em preço e 0,72 em embalagem.
 
-These are LLM labels, not human annotations. Code and results: https://github.com/fernandomcrsilva/review-aspects-ptbr. The license is CC BY-NC-SA 4.0, inherited from the Olist dataset.
+São rótulos gerados por LLM, não anotação humana. O código e os resultados estão em https://github.com/fernandomcrsilva/review-aspects-ptbr. A licença é CC BY-NC-SA 4.0, herdada do dataset da Olist.

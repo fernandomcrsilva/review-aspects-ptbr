@@ -1,98 +1,87 @@
-# Open vs. paid teacher: distilling aspect sentiment for PT-BR reviews on an 8 GB AMD GPU
+# Professor aberto ou pago? Destilando sentimento por aspecto de avaliações em PT-BR numa GPU AMD de 8 GB
 
-**Question:** to distill an LLM into a small model, does a free, local, open-weights teacher work as well as a paid API teacher?
+**Pergunta:** para destilar um LLM num modelo pequeno, um professor aberto, local e gratuito funciona tão bem quanto um professor pago via API?
 
-I fine-tuned the same student (Qwen3-1.7B + LoRA) twice on 9,000 Brazilian e-commerce reviews (Olist). One run used labels from **Claude Haiku**, a paid API. The other used labels from **Qwen3-8B**, running locally on a consumer **Radeon RX 7600 (8 GB)**. Both students were then evaluated on the same public test set.
+Treinei o mesmo aluno (Qwen3-1.7B com LoRA) duas vezes, em 9.000 avaliações de compras online da Olist. Uma vez com rótulos do **Claude Haiku**, uma API paga. Outra com rótulos do **Qwen3-8B**, rodando localmente numa placa de vídeo de consumo, uma **Radeon RX 7600 de 8 GB**. Os dois alunos foram avaliados no mesmo conjunto de teste público.
 
-**On Hugging Face:** the [Haiku-teacher adapter](https://huggingface.co/FMendonca/qwen3-1.7b-aspectos-olist-haiku), the [Qwen3-8B-teacher adapter](https://huggingface.co/FMendonca/qwen3-1.7b-aspectos-olist-qwen3-8b), and the [10k Qwen3-8B labels](https://huggingface.co/datasets/FMendonca/olist-aspectos-silver-qwen3-8b).
+**No Hugging Face:** [aluno do professor Haiku](https://huggingface.co/FMendonca/qwen3-1.7b-aspectos-olist-haiku), [aluno do professor Qwen3-8B](https://huggingface.co/FMendonca/qwen3-1.7b-aspectos-olist-qwen3-8b) e os [10 mil rótulos do Qwen3-8B](https://huggingface.co/datasets/FMendonca/olist-aspectos-silver-qwen3-8b).
 
-The task is aspect sentiment over five aspects: delivery, product, customer service, price and packaging. Each gets one of `positivo` / `negativo` / `neutro` / `ausente` (positive / negative / neutral / absent). The output is JSON that a support system can route on directly.
+A tarefa é classificar o sentimento de cinco aspectos: entrega, produto, atendimento, preço e embalagem. Cada aspecto recebe `positivo`, `negativo`, `neutro` ou `ausente`. A saída é um JSON que um sistema de atendimento pode usar direto para encaminhar o caso.
 
-## Results
+## Resultados
 
-Public gold set: 329 reviews. Macro-F1 is computed per aspect over the classes present, then averaged across aspects, using the same metric as the [reference work](https://github.com/renatospessotto/review-intelligence-ptbr). The 95% confidence intervals come from 1,000 bootstrap resamples. "Needs action" means the review has at least one negative aspect.
+O conjunto ouro público tem 329 avaliações. O F1-macro é calculado por aspecto, sobre as classes presentes, e depois tirada a média entre os aspectos. É a mesma métrica do [trabalho de referência](https://github.com/renatospessotto/review-intelligence-ptbr). Os intervalos de confiança de 95% vêm de 1.000 reamostragens por bootstrap. "Pede ação" significa que a avaliação tem pelo menos um aspecto negativo.
 
-| Model | Macro-F1 (95% CI) | "Needs action" recall | Reviews/s (Ryzen 5700X + RX 7600) |
+| Modelo | F1-macro (IC 95%) | Recall "pede ação" | Avaliações/s (Ryzen 5700X + RX 7600) |
 |---|---|---|---|
-| **Student, Haiku labels** | **0.784** (0.735–0.861) | **98.5%** | 6.6 |
-| Student, Qwen3-8B labels | 0.690 (0.645–0.769) | 96.2% | 6.8 |
-| TF-IDF + logistic regression, Haiku labels | 0.732 (0.671–0.769) | 94.6% | 14.7 (CPU) |
-| Teacher Qwen3-8B (zero-shot, Ollama) | 0.709 (0.676–0.769) | 96.2% | 0.9 (one request at a time); 2.5 (4 in parallel) |
-| TF-IDF + logistic regression, Qwen3-8B labels | 0.619 (0.580–0.650) | 95.4% | 17.0 (CPU) |
-| Student before fine-tuning (zero-shot) | 0.472 (0.434–0.499) | 91.5% | 3.7 |
+| **Aluno, rótulos do Haiku** | **0,784** (0,735–0,861) | **98,5%** | 6,6 |
+| Aluno, rótulos do Qwen3-8B | 0,690 (0,645–0,769) | 96,2% | 6,8 |
+| TF-IDF + regressão logística, rótulos do Haiku | 0,732 (0,671–0,769) | 94,6% | 14,7 (CPU) |
+| Professor Qwen3-8B (zero-shot, Ollama) | 0,709 (0,676–0,769) | 96,2% | 0,9 (uma requisição por vez); 2,5 (4 em paralelo) |
+| TF-IDF + regressão logística, rótulos do Qwen3-8B | 0,619 (0,580–0,650) | 95,4% | 17,0 (CPU) |
+| Aluno antes do ajuste (zero-shot) | 0,472 (0,434–0,499) | 91,5% | 3,7 |
 
-Paired bootstrap difference, Haiku student minus Qwen3-8B student: **+0.091** (95% CI +0.007 to +0.160).
+Diferença pareada por bootstrap, aluno do Haiku menos aluno do Qwen3-8B: **+0,091** (IC 95% de +0,007 a +0,160).
 
-Per aspect (macro-F1):
+Por aspecto (F1-macro):
 
-| Model | delivery | product | service | price | packaging |
+| Modelo | entrega | produto | atendimento | preço | embalagem |
 |---|---|---|---|---|---|
-| Student, Haiku labels | 0.70 | 0.81 | 0.83 | 0.97 | 0.61 |
-| Student, Qwen3-8B labels | 0.70 | 0.70 | 0.74 | 0.72 | 0.60 |
-| Teacher Qwen3-8B | 0.70 | 0.65 | 0.62 | 0.98 | 0.58 |
-| TF-IDF, Haiku labels | 0.66 | 0.69 | 0.61 | 0.94 | 0.75 |
+| Aluno, rótulos do Haiku | 0,70 | 0,81 | 0,83 | 0,97 | 0,61 |
+| Aluno, rótulos do Qwen3-8B | 0,70 | 0,70 | 0,74 | 0,72 | 0,60 |
+| Professor Qwen3-8B | 0,70 | 0,65 | 0,62 | 0,98 | 0,58 |
+| TF-IDF, rótulos do Haiku | 0,66 | 0,69 | 0,61 | 0,94 | 0,75 |
 
-## What I found
+## O que encontrei
 
-1. **The student inherits its teacher's ceiling.** The Qwen3-8B student gets 97% of its teacher's F1 (0.690 vs 0.709) and runs about 3× faster. That compares 6.8 reviews/s at batch 16 with the teacher's 2.5/s at 4 parallel requests. With the stronger teacher, the same student reaches 0.784.
-2. **The paid teacher won, but by less than it looks.** The +0.09 gap clears zero only barely. The gold set was annotated by Claude Opus plus a second model, so it may favour Claude-family labels. On delivery, the aspect that matters most for a logistics business, the two students tie at 0.70.
-3. **A student can beat its teacher where the teacher is inconsistent.** On customer service and product, the Qwen3-8B student scores higher than Qwen3-8B itself (0.74 vs 0.62 and 0.70 vs 0.65). Fine-tuning averages out the teacher's noise. Price goes the other way (0.72 vs 0.98): the gold set has only 16 non-absent price reviews, and with that few examples the student did not learn the class.
-4. **For triage, every option is already good.** "Needs action" recall is 96–98% for both students. The aspect-level detail is where they differ.
-5. **The fully open pipeline costs no API calls.** Qwen3-8B labelled the 10,000 reviews in about 67 minutes through Ollama (Vulkan), with schema-constrained JSON. Each student trained in 44 minutes, in 4.3 GB of VRAM.
+1. **O aluno herda o teto do professor.** O aluno do Qwen3-8B chega a 97% do F1 do professor (0,690 contra 0,709) e roda cerca de 3 vezes mais rápido: 6,8 avaliações/s com batch 16, contra 2,5/s do professor com 4 requisições em paralelo. Com o professor mais forte, o mesmo aluno chega a 0,784.
+2. **O professor pago venceu, mas por menos do que parece.** A diferença de +0,09 mal passa de zero no intervalo de confiança. O conjunto ouro foi anotado pelo Claude Opus e por um segundo modelo, então pode favorecer rótulos da família Claude. Na entrega, o aspecto que mais importa para um negócio de logística, os dois alunos empatam em 0,70.
+3. **O aluno pode superar o professor onde o professor é inconsistente.** Em atendimento e produto, o aluno do Qwen3-8B tira nota maior que o próprio Qwen3-8B (0,74 contra 0,62 e 0,70 contra 0,65). O ajuste fino tira a média do ruído do professor. Em preço acontece o contrário (0,72 contra 0,98): o ouro tem só 16 avaliações que falam de preço, e com tão poucos exemplos o aluno não aprendeu a classe.
+4. **Para triagem, todas as opções já são boas.** Os dois alunos detectam de 96% a 98% das avaliações que pedem ação. A diferença entre eles está no detalhe por aspecto.
+5. **A pipeline totalmente aberta não gasta nenhuma chamada de API.** O Qwen3-8B rotulou as 10 mil avaliações em cerca de 67 minutos via Ollama (Vulkan), com o JSON restrito ao esquema. Cada aluno treinou em 44 minutos, usando 4,3 GB de VRAM.
 
-## Running on an 8 GB AMD card
+## Rodando numa placa AMD de 8 GB
 
-PyTorch's ROCm 7.2 wheels run natively on the RX 7600 (gfx1102), with no `HSA_OVERRIDE_GFX_VERSION`. With plain LoRA, a batch of 4 sequences of 192 tokens ran out of the 8 GB. Three changes in [`src/train_lora.py`](src/train_lora.py) fixed that: batch 8 now peaks at 4.3 GB, and the short prompt alone made training 3.4× faster.
+Os pacotes do PyTorch para ROCm 7.2 rodam nativamente na RX 7600 (gfx1102), sem precisar de `HSA_OVERRIDE_GFX_VERSION`. Com LoRA simples, um batch de 4 sequências de 192 tokens estourava os 8 GB. Três mudanças em [`src/train_lora.py`](src/train_lora.py) resolveram: agora o batch 8 usa no máximo 4,3 GB, e só o prompt curto já deixou o treino 3,4 vezes mais rápido.
 
-- **Logits only on answer tokens.** Qwen3's 151k-token vocabulary makes full-sequence logits the biggest tensor in the step. The loss runs `lm_head` only on the JSON answer positions.
-- **A short prompt for the student.** The teacher needs the full annotation guide, about 400 tokens. Once fine-tuned, the student learns the schema and gets a one-line prompt, about 80 tokens. This cuts both training and inference cost.
-- **Padding to multiples of 32.** ROCm picks a kernel for each tensor shape, so fewer distinct shapes means less time spent selecting kernels.
+- **Logits só nos tokens da resposta.** O vocabulário de 151 mil tokens do Qwen3 faz dos logits da sequência inteira o maior tensor do passo. A loss roda o `lm_head` só nas posições do JSON de resposta.
+- **Prompt curto para o aluno.** O professor precisa do guia de anotação completo, com cerca de 400 tokens. Depois do ajuste, o aluno já aprendeu o esquema e recebe um prompt de uma linha, com cerca de 80 tokens. Isso barateia o treino e a inferência.
+- **Padding em múltiplos de 32.** O ROCm escolhe um kernel para cada formato de tensor, então menos formatos diferentes significa menos tempo escolhendo kernels.
 
-## Reproduce
+## Como reproduzir
 
 ```bash
-pip install torch --index-url https://download.pytorch.org/whl/rocm7.2   # or the CUDA build
+pip install torch --index-url https://download.pytorch.org/whl/rocm7.2   # ou a versão CUDA
 pip install -r requirements.txt
-python src/get_data.py                                                   # public gold + Haiku silver
-python src/teacher_label.py --model qwen3:8b --out data/silver-qwen3-8b  # needs `ollama serve`
+python src/get_data.py                                                   # ouro público + prata do Haiku
+python src/teacher_label.py --model qwen3:8b --out data/silver-qwen3-8b  # precisa do `ollama serve`
 python src/train_lora.py --silver data/aspectos/silver --out runs/aluno-haiku --batch 8 --accum 2
 python src/train_lora.py --silver data/silver-qwen3-8b --out runs/aluno-qwen3-8b --batch 8 --accum 2
-python src/evaluate.py --name aluno-haiku --adapter runs/aluno-haiku     # repeat for each model
+python src/evaluate.py --name aluno-haiku --adapter runs/aluno-haiku     # repita para cada modelo
 python src/report.py
 ```
 
-[`notebooks/kaggle_treino.ipynb`](notebooks/kaggle_treino.ipynb) is set up to run the same training on a free Kaggle T4, in fp32 because the T4 has no native bf16.
+O [`notebooks/kaggle_treino.ipynb`](notebooks/kaggle_treino.ipynb) está preparado para rodar o mesmo treino numa T4 gratuita do Kaggle. Lá o modelo roda em fp32, porque a T4 não tem bf16 nativo.
 
-| File | What it does |
+| Arquivo | O que faz |
 |---|---|
-| [`src/aspects.py`](src/aspects.py) | Schema, prompts, JSON parsing and the metric |
-| [`src/teacher_label.py`](src/teacher_label.py) | Open teacher via Ollama, resumable |
-| [`src/train_lora.py`](src/train_lora.py) | LoRA training, on ROCm or CUDA |
-| [`src/evaluate.py`](src/evaluate.py) | Student, teacher and TF-IDF on the gold set |
-| [`src/report.py`](src/report.py) | Bootstrap CIs and paired difference |
+| [`src/aspects.py`](src/aspects.py) | Esquema, prompts, leitura do JSON e a métrica |
+| [`src/teacher_label.py`](src/teacher_label.py) | Professor aberto via Ollama, retomável |
+| [`src/train_lora.py`](src/train_lora.py) | Treino LoRA, em ROCm ou CUDA |
+| [`src/evaluate.py`](src/evaluate.py) | Aluno, professor e TF-IDF no conjunto ouro |
+| [`src/report.py`](src/report.py) | IC por bootstrap e diferença pareada |
 
-## Limitations
+## Limitações
 
-- **The gold set is labelled by LLMs, not people.** It is the consensus of Claude Opus 5.5 and a second model, and only reviews where both agree on all five aspects are kept (329 of 400). Agreement-only sets skew toward easier reviews.
-- **Small set.** Price and packaging have 16 and 13 non-absent gold reviews, so their per-aspect scores are noisy. Read the confidence intervals.
-- **One run per arm.** Each student was trained once (seed 0), so I did not measure seed variance.
-- **The teacher prompt was not tuned.** I wrote it once from the gold set's annotation guide, before seeing any result, to avoid tuning on the test set.
-- **E-commerce, not food delivery.** Olist reviews are about product purchases.
+- **O ouro foi rotulado por LLMs, não por pessoas.** É o consenso entre o Claude Opus 5.5 e um segundo modelo. Só ficaram as avaliações em que os dois concordam nos cinco aspectos (329 de 400), o que puxa o conjunto para casos mais fáceis.
+- **Conjunto pequeno.** Preço e embalagem têm só 16 e 13 avaliações no ouro em que o aspecto aparece, então o F1 desses aspectos tem muito ruído. Leve em conta os intervalos de confiança.
+- **Uma rodada por braço.** Cada aluno foi treinado uma vez (seed 0), então não medi a variação entre seeds.
+- **O prompt do professor não foi ajustado.** Escrevi o prompt uma vez, a partir do guia de anotação do ouro e antes de ver qualquer resultado, para não ajustar no conjunto de teste.
+- **E-commerce, não delivery de comida.** As avaliações da Olist são sobre compras de produtos.
 
-## Data, credits and licenses
+## Dados, créditos e licenças
 
-- Reviews: [Olist Brazilian E-Commerce](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce), CC BY-NC-SA 4.0.
-- Gold set and Claude Haiku silver labels: [RenatoSpessotto/olist-aspectos-reviews-ptbr](https://huggingface.co/datasets/RenatoSpessotto/olist-aspectos-reviews-ptbr), CC BY-NC-SA 4.0. This project reuses their data and metric definition to measure one new variable: the teacher.
-- Models: [Qwen3-1.7B](https://huggingface.co/Qwen/Qwen3-1.7B) (student) and [Qwen3-8B](https://ollama.com/library/qwen3) (teacher), both Apache 2.0.
-- Code in this repository: [MIT](LICENSE). The data and adapters are derived from CC BY-NC-SA 4.0 data and inherit that license: non-commercial, share-alike.
-
-## Resumo em português
-
-Treinei o mesmo modelo pequeno (Qwen3-1.7B com LoRA) duas vezes. Uma vez com rótulos de um professor pago (Claude Haiku), outra com rótulos de um professor aberto rodando numa RX 7600 de 8 GB (Qwen3-8B). A tarefa é classificar o sentimento de 5 aspectos (entrega, produto, atendimento, preço e embalagem) em avaliações da Olist.
-
-- O aluno do professor pago chegou a F1 0,784; o do professor aberto, 0,690.
-- O aluno herda o teto do professor: atinge 97% do Qwen3-8B rodando cerca de 3 vezes mais rápido.
-- Na entrega, os dois empatam (0,70).
-- Os dois detectam mais de 96% das avaliações que pedem ação.
-
-A pipeline aberta não tem custo de API e roda inteira numa placa de vídeo de consumo.
+- Avaliações: [Olist Brazilian E-Commerce](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce), CC BY-NC-SA 4.0.
+- Conjunto ouro e rótulos prata do Claude Haiku: [RenatoSpessotto/olist-aspectos-reviews-ptbr](https://huggingface.co/datasets/RenatoSpessotto/olist-aspectos-reviews-ptbr), CC BY-NC-SA 4.0. Este projeto reaproveita os dados e a definição da métrica para medir uma variável nova: o professor.
+- Modelos: [Qwen3-1.7B](https://huggingface.co/Qwen/Qwen3-1.7B) (aluno) e [Qwen3-8B](https://ollama.com/library/qwen3) (professor), ambos Apache 2.0.
+- O código deste repositório está sob [MIT](LICENSE). Os dados e os adaptadores derivam de dados CC BY-NC-SA 4.0 e herdam essa licença: uso não comercial e compartilhamento pela mesma licença.
