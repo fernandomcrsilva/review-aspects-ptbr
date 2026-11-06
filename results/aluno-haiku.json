@@ -1,0 +1,14 @@
+{
+  "name": "aluno-haiku",
+  "n": 329,
+  "json_valido": 1.0,
+  "reviews_por_segundo": 6.550418088371501,
+  "entrega": 0.7046306862702874,
+  "produto": 0.8090314788473436,
+  "atendimento": 0.826183430028358,
+  "preco": 0.9691636363636363,
+  "embalagem": 0.6094459391289726,
+  "macro": 0.7836910341277197,
+  "acao_recall": 0.9846153846153847,
+  "acao_precisao": 0.9696969696969697
+}

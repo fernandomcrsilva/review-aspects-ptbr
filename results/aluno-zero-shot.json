@@ -1,0 +1,14 @@
+{
+  "name": "aluno-zero-shot",
+  "n": 329,
+  "json_valido": 1.0,
+  "reviews_por_segundo": 3.726843363551029,
+  "entrega": 0.5117603449182396,
+  "produto": 0.5952064523287348,
+  "atendimento": 0.3706694729760706,
+  "preco": 0.5944927536231884,
+  "embalagem": 0.28776645630990794,
+  "macro": 0.47197909603122834,
+  "acao_recall": 0.9153846153846154,
+  "acao_precisao": 0.952
+}

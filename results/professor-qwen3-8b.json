@@ -1,0 +1,14 @@
+{
+  "name": "professor-qwen3-8b",
+  "n": 329,
+  "json_valido": 1.0,
+  "reviews_por_segundo": 0.8572174584063043,
+  "entrega": 0.7019649876074323,
+  "produto": 0.6522104764368495,
+  "atendimento": 0.6239774557165861,
+  "preco": 0.9849739130434783,
+  "embalagem": 0.5829162229321974,
+  "macro": 0.7092086111473087,
+  "acao_recall": 0.9615384615384616,
+  "acao_precisao": 0.9765625
+}
