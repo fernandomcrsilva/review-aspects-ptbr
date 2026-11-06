@@ -1,0 +1,8 @@
+# torch: no Linux com GPU AMD, instale antes pelo índice ROCm:
+#   pip install torch --index-url https://download.pytorch.org/whl/rocm7.2
+torch>=2.8
+transformers>=5.0
+peft>=0.17
+accelerate
+scikit-learn
+requests
