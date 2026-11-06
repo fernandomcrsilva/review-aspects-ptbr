@@ -15,7 +15,7 @@ Public gold set: 329 reviews. Macro-F1 is computed per aspect over the classes p
 | **Student, Haiku labels** | **0.784** (0.735–0.861) | **98.5%** | 6.6 |
 | Student, Qwen3-8B labels | 0.690 (0.645–0.769) | 96.2% | 6.8 |
 | TF-IDF + logistic regression, Haiku labels | 0.732 (0.671–0.769) | 94.6% | 14.7 (CPU) |
-| Teacher Qwen3-8B (zero-shot, Ollama) | 0.709 (0.676–0.769) | 96.2% | 0.9 |
+| Teacher Qwen3-8B (zero-shot, Ollama) | 0.709 (0.676–0.769) | 96.2% | 0.9 (one request at a time); 2.5 (4 in parallel) |
 | TF-IDF + logistic regression, Qwen3-8B labels | 0.619 (0.580–0.650) | 95.4% | 17.0 (CPU) |
 | Student before fine-tuning (zero-shot) | 0.472 (0.434–0.499) | 91.5% | 3.7 |
 
@@ -32,7 +32,7 @@ Per aspect (macro-F1):
 
 ## What I found
 
-1. **The student inherits its teacher's ceiling.** The Qwen3-8B student gets 97% of its teacher's F1 (0.690 vs 0.709) and runs 8× faster. With the stronger teacher, the same student reaches 0.784.
+1. **The student inherits its teacher's ceiling.** The Qwen3-8B student gets 97% of its teacher's F1 (0.690 vs 0.709) and runs about 3× faster. That compares 6.8 reviews/s at batch 16 with the teacher's 2.5/s at 4 parallel requests. With the stronger teacher, the same student reaches 0.784.
 2. **The paid teacher won, but by less than it looks.** The +0.09 gap clears zero only barely. The gold set was annotated by Claude Opus plus a second model, so it may favour Claude-family labels. On delivery, the aspect that matters most for a logistics business, the two students tie at 0.70.
 3. **A student can beat its teacher where the teacher is inconsistent.** On customer service and product, the Qwen3-8B student scores higher than Qwen3-8B itself (0.74 vs 0.62 and 0.70 vs 0.65). Fine-tuning averages out the teacher's noise. Price goes the other way (0.72 vs 0.98): the gold set has only 16 non-absent price reviews, and with that few examples the student did not learn the class.
 4. **For triage, every option is already good.** "Needs action" recall is 96–98% for both students. The aspect-level detail is where they differ.
@@ -59,7 +59,7 @@ python src/evaluate.py --name aluno-haiku --adapter runs/aluno-haiku     # repea
 python src/report.py
 ```
 
-[`notebooks/kaggle_treino.ipynb`](notebooks/kaggle_treino.ipynb) runs the same training on a free Kaggle T4.
+[`notebooks/kaggle_treino.ipynb`](notebooks/kaggle_treino.ipynb) is set up to run the same training on a free Kaggle T4, in fp32 because the T4 has no native bf16.
 
 | File | What it does |
 |---|---|
@@ -89,7 +89,7 @@ python src/report.py
 Treinei o mesmo modelo pequeno (Qwen3-1.7B com LoRA) duas vezes. Uma vez com rótulos de um professor pago (Claude Haiku), outra com rótulos de um professor aberto rodando numa RX 7600 de 8 GB (Qwen3-8B). A tarefa é classificar o sentimento de 5 aspectos (entrega, produto, atendimento, preço e embalagem) em avaliações da Olist.
 
 - O aluno do professor pago chegou a F1 0,784; o do professor aberto, 0,690.
-- O aluno herda o teto do professor: atinge 97% do Qwen3-8B rodando 8 vezes mais rápido.
+- O aluno herda o teto do professor: atinge 97% do Qwen3-8B rodando cerca de 3 vezes mais rápido.
 - Na entrega, os dois empatam (0,70).
 - Os dois detectam mais de 96% das avaliações que pedem ação.
 
