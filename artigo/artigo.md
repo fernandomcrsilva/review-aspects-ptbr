@@ -31,7 +31,7 @@ Outro número ajuda a dar a escala: sem nenhum ajuste fino, o mesmo Qwen3-1.7B f
 
 Treinei também um classificador clássico, TF-IDF com regressão logística, uma vez com cada conjunto de rótulos. O algoritmo é idêntico nos dois casos, só muda quem rotulou. Com os rótulos do Haiku ele chega a 0,732. Com os do Qwen3-8B, 0,619.
 
-Ou seja: um modelo que roda em CPU e treina em segundos, alimentado com rótulos melhores, empata com o próprio Qwen3-8B (0,709), que tem 8 bilhões de parâmetros. Os intervalos de confiança dos dois praticamente se sobrepõem.
+Ou seja: um modelo simples, que roda em CPU, alimentado com rótulos melhores, empata com o próprio Qwen3-8B (0,709), que tem 8 bilhões de parâmetros. Os intervalos de confiança dos dois praticamente se sobrepõem.
 
 Para mim, a lição é que vale gastar tempo e dinheiro na qualidade dos rótulos antes de trocar de arquitetura.
 

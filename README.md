@@ -6,6 +6,8 @@ Para cada avaliação, o modelo diz se o cliente falou bem, mal ou de forma neut
 
 Os modelos e os rótulos estão no Hugging Face: o [aluno treinado com o Haiku](https://huggingface.co/FMendonca/qwen3-1.7b-aspectos-olist-haiku), o [aluno treinado com o Qwen3-8B](https://huggingface.co/FMendonca/qwen3-1.7b-aspectos-olist-qwen3-8b) e os [10 mil rótulos gerados pelo Qwen3-8B](https://huggingface.co/datasets/FMendonca/olist-aspectos-silver-qwen3-8b).
 
+A história completa do experimento, com o que deu certo e o que surpreendeu, está no artigo [Vale pagar uma API para rotular dados?](artigo/artigo.md).
+
 ## Resultados
 
 O conjunto de teste tem 329 avaliações. A métrica é a mesma do [trabalho de referência](https://github.com/renatospessotto/review-intelligence-ptbr): calcula-se o F1 macro de cada aspecto, considerando só as classes que aparecem, e tira-se a média dos cinco. Os intervalos de confiança de 95% vêm de 1.000 reamostragens (bootstrap).
