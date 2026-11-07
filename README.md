@@ -67,7 +67,7 @@ python src/evaluate.py --name aluno-haiku --adapter runs/aluno-haiku     # repit
 python src/report.py
 ```
 
-O notebook [`notebooks/kaggle_treino.ipynb`](notebooks/kaggle_treino.ipynb) foi preparado para rodar o mesmo treino numa T4 gratuita do Kaggle, em fp32, porque a T4 não tem bf16 nativo. Ele ainda não foi executado lá.
+O notebook [`notebooks/kaggle_treino.ipynb`](notebooks/kaggle_treino.ipynb) refaz o treino do aluno com rótulos do Haiku numa T4 gratuita do Kaggle, em fp32, porque a T4 não tem bf16 nativo. Na [execução pública no Kaggle](https://www.kaggle.com/code/fernandomcrsilva/review-aspects-ptbr-treino), os números ficaram quase iguais aos da RX 7600: 0,791 no aluno (0,784 aqui), 0,732 no TF-IDF e 0,473 no aluno sem ajuste fino.
 
 | Arquivo | Função |
 |---|---|
