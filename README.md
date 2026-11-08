@@ -69,7 +69,7 @@ python src/evaluate.py --name aluno-haiku --adapter runs/aluno-haiku     # repit
 python src/report.py
 ```
 
-O notebook [`notebooks/kaggle_treino.ipynb`](notebooks/kaggle_treino.ipynb) refaz o treino do aluno com rótulos do Haiku numa T4 gratuita do Kaggle, em fp32, porque a T4 não tem bf16 nativo. Na [execução pública no Kaggle](https://www.kaggle.com/code/fernandomcrsilva/review-aspects-ptbr-treino), os números ficaram quase iguais aos da RX 7600: 0,791 no aluno (0,784 aqui), 0,732 no TF-IDF e 0,473 no aluno sem ajuste fino.
+O notebook [`notebooks/kaggle_treino.ipynb`](notebooks/kaggle_treino.ipynb) refaz o treino do aluno com rótulos do Qwen3-8B numa T4 gratuita do Kaggle, em fp32, porque a T4 não tem bf16 nativo. Na [execução pública no Kaggle](https://www.kaggle.com/code/fernandomcrsilva/review-aspects-ptbr-treino), o TF-IDF deu 0,619 e o aluno sem ajuste fino 0,473, os mesmos números da RX 7600. O aluno chegou a 0,740 (0,690 aqui), dentro do intervalo de confiança medido em casa. Quase toda a diferença está em preço, que subiu de 0,72 para 0,95: só 16 avaliações do teste falam de preço, e poucos acertos a mais mudam muito a nota. Até 8 de novembro de 2026 o notebook treinava o aluno do Haiku, e mudou pelo mesmo motivo que esse aluno não é distribuído.
 
 | Arquivo | Função |
 |---|---|
