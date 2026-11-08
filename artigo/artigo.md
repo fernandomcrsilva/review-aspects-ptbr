@@ -72,7 +72,7 @@ O próximo teste que quero fazer é misturar os dois: deixar o professor aberto 
 ## Para ver e rodar
 
 - Código, resultados e instruções: [github.com/fernandomcrsilva/review-aspects-ptbr](https://github.com/fernandomcrsilva/review-aspects-ptbr)
-- Os dois alunos no Hugging Face: [rótulos do Haiku](https://huggingface.co/FMendonca/qwen3-1.7b-aspectos-olist-haiku) e [rótulos do Qwen3-8B](https://huggingface.co/FMendonca/qwen3-1.7b-aspectos-olist-qwen3-8b)
+- O aluno dos rótulos do Qwen3-8B no Hugging Face: [FMendonca/qwen3-1.7b-aspectos-olist-qwen3-8b](https://huggingface.co/FMendonca/qwen3-1.7b-aspectos-olist-qwen3-8b). O aluno dos rótulos do Haiku não é distribuído, porque a [Política de Uso da Anthropic](https://www.anthropic.com/legal/aup) proíbe usar saídas do Claude para treinar modelos sem autorização prévia.
 - Os 10 mil rótulos do Qwen3-8B: [FMendonca/olist-aspectos-silver-qwen3-8b](https://huggingface.co/datasets/FMendonca/olist-aspectos-silver-qwen3-8b)
 - O treino rodando numa T4 do Kaggle: [review-aspects-ptbr-treino](https://www.kaggle.com/code/fernandomcrsilva/review-aspects-ptbr-treino)
 

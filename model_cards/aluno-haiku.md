@@ -10,6 +10,8 @@ tags: [lora, aspect-based-sentiment-analysis, portuguese, distillation, e-commer
 
 # Qwen3-1.7B com LoRA para análise de aspectos em avaliações da Olist (rótulos do Claude Haiku)
 
+> Este adaptador não é distribuído publicamente. Ele foi treinado com rótulos do Claude Haiku, e a [Política de Uso da Anthropic](https://www.anthropic.com/legal/aup) proíbe usar saídas do Claude para treinar modelos sem autorização prévia. Os resultados estão no [repositório](https://github.com/fernandomcrsilva/review-aspects-ptbr).
+
 Este adaptador LoRA faz o [Qwen3-1.7B](https://huggingface.co/Qwen/Qwen3-1.7B) ler uma avaliação de compra em português e dizer como o cliente falou de cinco aspectos: `entrega`, `produto`, `atendimento`, `preco` e `embalagem`. Cada aspecto recebe `positivo`, `negativo`, `neutro` ou `ausente`, e a resposta sai em JSON.
 
 O modelo foi treinado com 9 mil avaliações da Olist rotuladas pelo Claude Haiku, um modelo pago acessado por API. O treino rodou numa Radeon RX 7600 de 8 GB, com ROCm. Ele faz parte de um experimento que compara o que um aluno aprende com um professor aberto e local e com um professor pago. O [código e os resultados completos](https://github.com/fernandomcrsilva/review-aspects-ptbr) estão no GitHub.

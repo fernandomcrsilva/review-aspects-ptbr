@@ -4,7 +4,7 @@ Quando se destila um LLM grande num modelo pequeno, quem gera os rótulos de tre
 
 Para cada avaliação, o modelo diz se o cliente falou bem, mal ou de forma neutra de cinco aspectos da compra (entrega, produto, atendimento, preço e embalagem), ou se nem chegou a falar deles. A resposta sai em JSON, pronta para um sistema de atendimento decidir para onde encaminhar o caso.
 
-Os modelos e os rótulos estão no Hugging Face: o [aluno treinado com o Haiku](https://huggingface.co/FMendonca/qwen3-1.7b-aspectos-olist-haiku), o [aluno treinado com o Qwen3-8B](https://huggingface.co/FMendonca/qwen3-1.7b-aspectos-olist-qwen3-8b) e os [10 mil rótulos gerados pelo Qwen3-8B](https://huggingface.co/datasets/FMendonca/olist-aspectos-silver-qwen3-8b).
+Estão no Hugging Face o [aluno treinado com o Qwen3-8B](https://huggingface.co/FMendonca/qwen3-1.7b-aspectos-olist-qwen3-8b) e os [10 mil rótulos gerados pelo Qwen3-8B](https://huggingface.co/datasets/FMendonca/olist-aspectos-silver-qwen3-8b). O aluno treinado com os rótulos do Haiku não é distribuído, porque a [Política de Uso da Anthropic](https://www.anthropic.com/legal/aup) proíbe usar saídas do Claude para treinar modelos sem autorização prévia. Os resultados dele continuam aqui, como medida.
 
 A história completa do experimento, com o que deu certo e o que surpreendeu, está no artigo [Vale pagar uma API para rotular dados?](artigo/artigo.md).
 
@@ -90,6 +90,7 @@ O notebook [`notebooks/kaggle_treino.ipynb`](notebooks/kaggle_treino.ipynb) refa
 ## Dados, créditos e licenças
 
 - As avaliações vêm do [Olist Brazilian E-Commerce](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce), sob CC BY-NC-SA 4.0.
+- O adaptador treinado com os rótulos do Claude Haiku não é distribuído. Os rótulos vêm de um conjunto público de terceiros, mas a [Política de Uso da Anthropic](https://www.anthropic.com/legal/aup) proíbe usar saídas do Claude para treinar modelos sem autorização prévia. Por isso, só os resultados desse aluno ficam públicos.
 - O conjunto de teste e os rótulos do Claude Haiku são de [RenatoSpessotto/olist-aspectos-reviews-ptbr](https://huggingface.co/datasets/RenatoSpessotto/olist-aspectos-reviews-ptbr), também sob CC BY-NC-SA 4.0. Este projeto reaproveita esses dados e a definição da métrica para medir uma única variável nova: o professor.
 - Os modelos usados são o [Qwen3-1.7B](https://huggingface.co/Qwen/Qwen3-1.7B), como aluno, e o [Qwen3-8B](https://ollama.com/library/qwen3), como professor, ambos sob Apache 2.0.
 - O código deste repositório está sob [MIT](LICENSE). Os rótulos e os adaptadores derivam de dados CC BY-NC-SA 4.0 e herdam essa licença, ou seja, só podem ser usados para fins não comerciais e redistribuídos sob a mesma licença.
